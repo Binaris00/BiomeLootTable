@@ -17,7 +17,7 @@ public class BiomeLootTable implements DedicatedServerModInitializer {
 	public static final String MODID = "biome_loot_table";
 	/** Logger del mod */
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
-
+	/** Random para el mod */
     public static final Random random = new Random();
 
 	@Override

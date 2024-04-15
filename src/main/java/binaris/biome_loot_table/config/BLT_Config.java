@@ -28,8 +28,6 @@ public final class BLT_Config {
     public static final String LOOT_TABLES = "loot_tables";
     // ==========================================
 
-
-
     // ================== Files ==================
     /** Directorio de la config del mod */
     public static final File path = new File(FabricLoader.getInstance().getConfigDir().toFile(), MODID + "/");
@@ -50,6 +48,10 @@ public final class BLT_Config {
      * @see BLT_Config#readConfig(LootManager)
      * **/
     public static final ArrayList<LootTable> DEFAULT_LIST = new ArrayList<>();
+    /** Lista de los ids de las loot tables en caso de se abra un cofre
+     * @see BLT_Config#readConfig(LootManager)
+     * **/
+    public static final HashMap<LootTable, Identifier> LOOT_TABLES_ID = new HashMap<>();
 
     /**
      * Crea el archivo de configuracion si no existe
@@ -111,6 +113,7 @@ public final class BLT_Config {
     public static void readConfig(LootManager lootManager){
         CONFIG_MAP.clear();
         DEFAULT_LIST.clear();
+        LOOT_TABLES_ID.clear();
 
         // Obten todos los files que esten en el path
         File[] files = path.listFiles();
@@ -119,7 +122,9 @@ public final class BLT_Config {
         for(File file : files){
             // Si el archivo es un directorio, lo salta
             if(file.isDirectory()) {
-                LOGGER.warn("Directorio invalido dentro de la config del mod cuando solo se esperan archivos JSON.");
+                LOGGER.error("Directorio invalido dentro de la config del mod cuando solo se esperan archivos JSON.");
+                LOGGER.error("Directorio: %s".formatted(file.getName()));
+                LOGGER.error("Saltando directorio...");
                 continue;
             }
 
@@ -145,10 +150,12 @@ public final class BLT_Config {
                 for(String loot : loot_tables){
                     Identifier id = new Identifier(loot);
                     LootTable table = lootManager.getTable(id);
-                    if(table == null) {
+                    if(table == LootTable.EMPTY) {
                         LOGGER.error("No se encontró la loot table con el id: %s".formatted(id));
+                        LOGGER.error("Favor de revisar si el id esta bien escrito o si la loot table existe.");
                         continue;
                     }
+                    LOOT_TABLES_ID.put(table, id);
                     lootTables.add(table);
                 }
                 CONFIG_MAP.put(new Identifier(biome_type), lootTables);
@@ -158,9 +165,7 @@ public final class BLT_Config {
             }
         }
 
-
-
-        // Logger
+        // Logger a la hora de cargar la config en el inicio del servidor
         LOGGER.info("=====================================");
         LOGGER.info("BiomeLootTable config cargada con éxito");
         LOGGER.info("En un total de %d archivos".formatted(CONFIG_MAP.keySet().size()));
@@ -182,12 +187,25 @@ public final class BLT_Config {
      * @return una loot table aleatoria
      * **/
     public static LootTable getLootTable(BlockEntity entity){
-        Identifier biome = entity.getWorld().getBiome(entity.getPos()).getKey().get().getRegistry();
+        Identifier biome = entity.getWorld().getBiome(entity.getPos()).getKey().get().getValue();
 
-        if(CONFIG_MAP.get(biome) != null){
+        if(CONFIG_MAP.get(biome) != null && !CONFIG_MAP.get(biome).isEmpty()){
             return CONFIG_MAP.get(biome).get(random.nextInt(CONFIG_MAP.get(biome).size()));
         } else {
             return DEFAULT_LIST.get(random.nextInt(DEFAULT_LIST.size()));
         }
+    }
+
+    /**
+     * Obtiene el identifier de una loot table
+     *
+     * @param lootTable la loot table de la que se quiere obtener el identifier
+     * @return el id de la loot table
+     * **/
+    public static Identifier getLootTableId(LootTable lootTable){
+        // Normalmente preguntarias por que es necesario tener el id... yo tambien.
+        return LOOT_TABLES_ID.get(lootTable);
+
+
     }
 }

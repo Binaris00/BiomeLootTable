@@ -31,7 +31,7 @@ public final class BLT_Commands {
 
     private static int executeInfo(CommandContext<ServerCommandSource> context){
         ServerCommandSource source = context.getSource();
-        source.sendMessage(Text.literal("BiomeLootTable version: 1.0.1").formatted(Formatting.GREEN));
+        source.sendMessage(Text.literal("BiomeLootTable version: 1.0.0 By Binaris").formatted(Formatting.GREEN));
         source.sendMessage(Text.literal("Total de archivos: %d".formatted(CONFIG_MAP.keySet().size())).formatted(Formatting.GREEN));
         source.sendMessage(Text.literal("Loot Tables default: %d".formatted(DEFAULT_LIST.size())).formatted(Formatting.GREEN));
         CONFIG_MAP.forEach((biome, lootTables) -> source.sendMessage(Text.literal("Biome type: %s -> Loot tables: %s".formatted(biome, lootTables.size())).formatted(Formatting.GREEN)));

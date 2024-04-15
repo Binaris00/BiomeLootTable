@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.Proxy;
 
+/**
+ * Mixin para poder leer la configuración del mod al iniciar el servidor
+ */
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
 

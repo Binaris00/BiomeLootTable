@@ -3,7 +3,8 @@
   "package": "binaris.biome_loot_table.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "LootableContainerBlockEntityMixin",
+    "ChestBlockEntityMixin",
+    "ChestBlockMixin",
     "MinecraftServerMixin"
   ],
   "injectors": {
